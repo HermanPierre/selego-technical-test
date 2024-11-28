@@ -49,7 +49,7 @@ export default () => {
               </div>
               <div className="w-full md:w-[48.5%]">
                 <div>Email</div>
-                <input className="projectsInput" value={values.email} />
+                <input className="projectsInput" value={values.email} type="email" />
               </div>
             </div>
             {/* second Row */}

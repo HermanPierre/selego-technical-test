@@ -75,7 +75,7 @@ const Detail = ({ user }) => {
               </div>
               <div className="w-full md:w-[260px] mt-[10px] md:mt-0">
                 <div className="text-[14px] text-[#212325] font-medium	">Email</div>
-                <input className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]" name="email" value={values.email} onChange={handleChange} />
+                <input className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]" name="email" type="email" value={values.email} onChange={handleChange} />
               </div>
               <div className="w-full md:w-[165px] mt-[10px] md:mt-0">
                 <div className="text-[14px] text-[#212325] font-medium	">Status</div>

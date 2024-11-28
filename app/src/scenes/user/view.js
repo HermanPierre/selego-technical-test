@@ -5,15 +5,19 @@ import { useHistory, useParams } from "react-router-dom";
 
 import Loader from "../../components/loader";
 import LoadingButton from "../../components/loadingButton";
-import api from "../../services/api";
+import userService from "../../services/users";
 
 export default () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   useEffect(() => {
     (async () => {
-      const response = await api.get(`/user/${id}`);
-      setUser(response.data);
+      try {
+        const user = await userService.getById(id);
+        setUser(user);
+      } catch (error) {
+        toast.error("Failed to load user");
+      }
     })();
   }, []);
 
@@ -34,9 +38,13 @@ const Detail = ({ user }) => {
   async function deleteData() {
     const confirm = window.confirm("Are you sure ?");
     if (!confirm) return;
-    await api.remove(`/user/${user._id}`);
-    toast.success("successfully removed!");
-    history.push(`/user`);
+    try {
+      await userService.delete(user._id);
+      toast.success("successfully removed!");
+      history.push(`/user`);
+    } catch (error) {
+      toast.error("Failed to delete user");
+    }
   }
 
   return (
@@ -44,10 +52,10 @@ const Detail = ({ user }) => {
       initialValues={user}
       onSubmit={async (values) => {
         try {
-          await api.put(`/user/${user._id}`, values);
+          await userService.update(user._id, values);
           toast.success("Updated!");
-        } catch (e) {
-          console.log(e);
+        } catch (error) {
+          console.log(error);
           toast.error("Some Error!");
         }
       }}>
@@ -91,7 +99,7 @@ const Detail = ({ user }) => {
 
             <div className="flex flex-wrap justify-between mt-4">
               <div className="w-full md:w-[260px] ">
-                <div className="text-[14px] text-[#212325] font-medium	">Days worked</div>
+                <div className="text-[14px] text-[#212325] font-medium">Days worked</div>
                 <input
                   className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]"
                   type="number"
@@ -132,7 +140,7 @@ const Detail = ({ user }) => {
             </div>
 
             <div className="flex  mt-2">
-              <LoadingButton className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" loading={isSubmitting} onChange={handleSubmit}>
+              <LoadingButton className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" loading={isSubmitting} onClick={handleSubmit}>
                 Update
               </LoadingButton>
               <button className="ml-[10px] bg-[#F43F5E] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" onClick={deleteData}>

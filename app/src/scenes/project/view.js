@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { IoIosAt, IoIosLink } from "react-icons/io";
 import { useHistory, useParams } from "react-router-dom";
 
-import { getDaysInMonth } from "./utils";
+import { getDaysInMonth, handleExportExcel } from "./utils";
 
 import Loader from "../../components/loader";
 import api from "../../services/api";
@@ -44,6 +44,9 @@ export default function ProjectView() {
               <span className="text-[18px] text-[#212325] font-semibold">Project details</span>
             </div>
             <div className="flex items-center gap-2">
+              <button onClick={() => handleExportExcel(project)} className="border !border-[#0560FD] text-[#0560FD] py-[7px] px-[20px] bg-[#FFFFFF] rounded-[16px]">
+                Monthly XLSX export
+              </button>
               <button
                 onClick={() => history.push(`/project/edit/${project?._id}`)}
                 className="border !border-[#0560FD] text-[#0560FD] py-[7px] px-[20px] bg-[#FFFFFF] rounded-[16px]">

@@ -52,7 +52,7 @@ const Activities = ({ date, user, project }) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await api.get(`/activity?date=${date.getTime()}&user=${user.name}&project=${project}`);
+      const { data } = await api.get(`/activity?date=${date.getTime()}&userId=${user._id}&project=${project}`);
       const projects = await api.get(`/project/list`);
       setActivities(
         data.map((activity) => {

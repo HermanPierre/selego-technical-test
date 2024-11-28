@@ -7,6 +7,7 @@ import LoadingButton from "../../components/loadingButton";
 import api from "../../services/api";
 
 import toast from "react-hot-toast";
+import projectService from "../../services/project";
 
 export default function EditProject() {
   const [project, setProject] = useState(null);
@@ -26,9 +27,13 @@ export default function EditProject() {
   async function deleteData() {
     const confirm = window.confirm("Are you sure ?");
     if (!confirm) return;
-    await api.remove(`/project/${id}`);
-    toast.success("successfully removed!");
-    history.push("/projects");
+    try {
+      await projectService.delete(id);
+      toast.success("successfully removed!");
+      history.push("/projects");
+    } catch (error) {
+      toast.error("Failed to delete project");
+    }
   }
 
   if (!project) return <Loader />;
@@ -48,7 +53,7 @@ export default function EditProject() {
             initialValues={project}
             onSubmit={async (values) => {
               try {
-                await api.put(`/project/${project._id}`, values);
+                await projectService.update(project._id, values);
                 toast.success(`${project.name} updated!`);
                 history.push(`/project/${project._id}`);
               } catch (e) {

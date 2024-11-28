@@ -2,6 +2,22 @@
 import API from "./api";
 
 const userService = {
+  async create(values) {
+    console.log({ values });
+    try {
+      const { data, ok } = await API.post("/user", values);
+
+      if (!ok || !data) {
+        throw new Error("Failed to create user");
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  },
+
   async getById(id) {
     try {
       const { data, ok } = await API.get(`/user/${id}`);

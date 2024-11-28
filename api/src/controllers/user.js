@@ -5,7 +5,7 @@ const router = express.Router();
 const UserObject = require("../models/user");
 const AuthObject = require("../auth");
 
-const { validatePassword } = require("../utils");
+const { validatePassword, createGravatarUrl} = require("../utils");
 
 const UserAuth = new AuthObject(UserObject);
 
@@ -44,11 +44,18 @@ router.post("/", passport.authenticate("user", { session: false }), async (req, 
   try {
     if (!validatePassword(req.body.password)) return res.status(400).send({ ok: false, user: null, code: PASSWORD_NOT_VALIDATED });
 
-    const user = await UserObject.create({ ...req.body, organisation: req.user.organisation });
+    const gravatarUrl = createGravatarUrl(req.body.email);
+
+    const user = await UserObject.create({
+      ...req.body,
+      organisation: req.user.organisation,
+      avatar: gravatarUrl,
+    });
 
     return res.status(200).send({ data: user, ok: true });
   } catch (error) {
-    if (error.code === 11000) return res.status(409).send({ ok: false, code: USER_ALREADY_REGISTERED });
+    if (error.code === 11000)
+      return res.status(409).send({ ok: false, code: USER_ALREADY_REGISTERED });
     console.log(error);
     return res.status(500).send({ ok: false, code: SERVER_ERROR });
   }
@@ -67,6 +74,7 @@ router.get("/", passport.authenticate("user", { session: false }), async (req, r
 router.put("/:id", passport.authenticate("user", { session: false }), async (req, res) => {
   try {
     const obj = req.body;
+    obj.avatar = createGravatarUrl(obj.email);
 
     const user = await UserObject.findByIdAndUpdate(req.params.id, obj, { new: true });
     res.status(200).send({ ok: true, user });
@@ -79,6 +87,8 @@ router.put("/:id", passport.authenticate("user", { session: false }), async (req
 router.put("/", passport.authenticate("user", { session: false }), async (req, res) => {
   try {
     const obj = req.body;
+    obj.avatar = createGravatarUrl(obj.email);
+
     const data = await UserObject.findByIdAndUpdate(req.user._id, obj, { new: true });
     res.status(200).send({ ok: true, data });
   } catch (error) {
@@ -86,6 +96,7 @@ router.put("/", passport.authenticate("user", { session: false }), async (req, r
     res.status(500).send({ ok: false, code: SERVER_ERROR, error });
   }
 });
+
 
 router.delete("/:id", passport.authenticate("user", { session: false }), async (req, res) => {
   try {

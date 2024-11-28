@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import Loader from "../../components/loader";
 import LoadingButton from "../../components/loadingButton";
 import api from "../../services/api";
+import userService from "../../services/users";
 
 const NewList = () => {
   const [users, setUsers] = useState(null);
@@ -111,14 +112,14 @@ const Create = () => {
                   values.status = "active";
                   values.availability = "not available";
                   values.role = "ADMIN";
-                  const res = await api.post("/user", values);
-                  if (!res.ok) throw res;
+
+                  const newUser = await userService.create(values);
                   toast.success("Created!");
                   setOpen(false);
-                  history.push(`/user/${res.data._id}`);
-                } catch (e) {
-                  console.log(e);
-                  toast.error("Some Error!", e.code);
+                  history.push(`/user/${newUser._id}`);
+                } catch (error) {
+                  console.log(error);
+                  toast.error("Failed to create user");
                 }
                 setSubmitting(false);
               }}>

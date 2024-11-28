@@ -1,6 +1,21 @@
 import API from "./api";
 
 const projectService = {
+  async create(values) {
+    try {
+      const { data, ok } = await API.post("/project", values);
+
+      if (!ok || !data) {
+        throw new Error("Failed to create project");
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error creating project:", error);
+      throw error;
+    }
+  },
+
   async getById(id) {
     try {
       const { data, ok } = await API.get(`/project/${id}`);

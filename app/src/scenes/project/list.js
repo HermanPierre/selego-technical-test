@@ -8,6 +8,7 @@ import LoadingButton from "../../components/loadingButton";
 import ProgressBar from "../../components/ProgressBar";
 
 import api from "../../services/api";
+import projectService from "../../services/project";
 const ProjectList = () => {
   const [projects, setProjects] = useState(null);
   const [activeProjects, setActiveProjects] = useState(null);
@@ -94,6 +95,7 @@ const Budget = ({ project }) => {
 
 const Create = ({ onChangeSearch }) => {
   const [open, setOpen] = useState(false);
+  const history = useHistory();
 
   return (
     <div className="mb-[10px] ">
@@ -142,13 +144,13 @@ const Create = ({ onChangeSearch }) => {
               onSubmit={async (values, { setSubmitting }) => {
                 try {
                   values.status = "active";
-                  const res = await api.post("/project", values);
-                  if (!res.ok) throw res;
-                  toast.success("Created!");
+                  const newProject = await projectService.create(values);
+                  toast.success("Project created successfully!");
+                  history.push(`/project/${newProject._id}`);
                   setOpen(false);
-                } catch (e) {
-                  console.log(e);
-                  toast.error("Some Error!", e.code);
+                } catch (error) {
+                  console.log(error);
+                  toast.error("Failed to create project");
                 }
                 setSubmitting(false);
               }}>
